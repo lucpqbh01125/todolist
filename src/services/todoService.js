@@ -1,12 +1,9 @@
-// TodoList Service - Xử lý logic data và business logic
-
 class TodoService {
   constructor() {
     this.storageKey = 'todolist_tasks';
     this.tasks = this.loadTasks();
   }
 
-  // Load tasks from localStorage
   loadTasks() {
     try {
       const saved = localStorage.getItem(this.storageKey);
@@ -19,7 +16,6 @@ class TodoService {
     
   }
 
-  // Save tasks to localStorage
   saveTasks() {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(this.tasks));
@@ -28,12 +24,10 @@ class TodoService {
     }
   }
 
-  // Get all tasks
   getAllTasks() {
     return [...this.tasks];
   }
 
-  // Add new task
   addTask(taskData) {
     const newTask = {
       id: Date.now().toString(),
@@ -53,7 +47,6 @@ class TodoService {
     return newTask;
   }
 
-  // Update task
   updateTask(id, updates) {
     const taskIndex = this.tasks.findIndex(task => task.id === id);
     if (taskIndex !== -1) {
@@ -68,7 +61,6 @@ class TodoService {
     return null;
   }
 
-  // Toggle task completion
   toggleTask(id) {
     const task = this.tasks.find(task => task.id === id);
     if (task) {
@@ -85,7 +77,6 @@ class TodoService {
     return null;
   }
 
-  // Delete task
   deleteTask(id) {
     const initialLength = this.tasks.length;
     this.tasks = this.tasks.filter(task => task.id !== id);
@@ -96,7 +87,6 @@ class TodoService {
     return false;
   }
 
-  // Clear completed tasks
   clearCompleted() {
     const completed = this.tasks.filter(task => task.completed).length;
     this.tasks = this.tasks.filter(task => !task.completed);
@@ -104,7 +94,6 @@ class TodoService {
     return completed;
   }
 
-  // Get task statistics
   getStatistics() {
     const total = this.tasks.length;
     const completed = this.tasks.filter(t => t.completed).length;
@@ -129,7 +118,6 @@ class TodoService {
     return { total, completed, active, dueSoon, overdue };
   }
 
-  // Filter tasks
   filterTasks(tasks, filter) {
     switch (filter) {
       case 'active':
@@ -157,7 +145,6 @@ class TodoService {
     }
   }
 
-  // Sort tasks
   sortTasks(tasks, sortBy) {
     const sorted = [...tasks];
     
@@ -187,7 +174,6 @@ class TodoService {
     }
   }
 
-  // Search tasks (optimized)
   searchTasks(tasks, searchTerm) {
     if (!searchTerm.trim()) return tasks;
     
@@ -201,11 +187,8 @@ class TodoService {
     });
   }
 
-  // Get filtered and sorted tasks
   getFilteredTasks(filter = 'all', sortBy = 'created', searchTerm = '') {
     let tasks = this.getAllTasks();
-    
-    // Apply all operations in sequence
     tasks = this.filterTasks(tasks, filter);
     tasks = this.searchTasks(tasks, searchTerm);
     tasks = this.sortTasks(tasks, sortBy);
@@ -213,7 +196,6 @@ class TodoService {
     return tasks;
   }
 
-  // Check if task is overdue
   isTaskOverdue(task) {
     if (!task.due || task.completed) return false;
     const dueDate = new Date(task.due);
@@ -221,7 +203,6 @@ class TodoService {
     return dueDate < today;
   }
 
-  // Check if task is due soon
   isTaskDueSoon(task) {
     if (!task.due || task.completed) return false;
     const dueDate = new Date(task.due);
@@ -231,13 +212,11 @@ class TodoService {
     return diffDays <= 3 && diffDays >= 0;
   }
 
-  // Format Vietnamese date
   formatVietnameseDate(dateString) {
     if (!dateString) return '';
     return new Date(dateString).toLocaleDateString('vi-VN');
   }
 
-  // Export tasks to JSON
   exportTasks() {
     return {
       tasks: this.tasks,
@@ -246,11 +225,9 @@ class TodoService {
     };
   }
 
-  // Import tasks from JSON
   importTasks(data) {
     try {
       if (data.tasks && Array.isArray(data.tasks)) {
-        // Generate new IDs for imported tasks to avoid conflicts
         const importedTasks = data.tasks.map(task => ({
           ...task,
           id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -267,8 +244,6 @@ class TodoService {
     }
     return 0;
   }
-
-  // === UI UTILITIES === //
   
   // Random color generator for tasks
   getRandomColor() {
@@ -287,7 +262,6 @@ class TodoService {
     return colors[Math.floor(Math.random() * colors.length)];
   }
 
-  // Create floating stars effect
   createStarsEffect() {
     const n = window.innerWidth > 768 ? 30 : 15;
     const fragment = document.createDocumentFragment();
@@ -317,36 +291,28 @@ class TodoService {
     document.body.appendChild(fragment);
   }
 
-  // Remove all stars
   removeStarsEffect() {
     document.querySelectorAll('.star').forEach(star => star.remove());
   }
 
-  // Star fireworks effect when task completed
   showStarFireworks() {
-    // Get all existing stars
     const stars = document.querySelectorAll('.star');
-    
-    // Convert stars to colorful fireworks
     stars.forEach((star, index) => {
       setTimeout(() => {
         // Change star color to bright colors
         const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#FFD93D', '#6BCF7F', '#4D96FF'];
         const color = colors[Math.floor(Math.random() * colors.length)];
         
-        // Make star bigger and colorful
         star.style.background = color;
         star.style.boxShadow = `0 0 20px ${color}, 0 0 40px ${color}`;
         star.style.transform = 'scale(3)';
         star.style.transition = 'all 0.3s ease';
         
-        // Create explosion effect
         setTimeout(() => {
           const rect = star.getBoundingClientRect();
           const centerX = rect.left + rect.width / 2;
           const centerY = rect.top + rect.height / 2;
-          
-          // Create 8 sparks radiating from star
+        
           for (let i = 0; i < 8; i++) {
             const spark = document.createElement("div");
             const angle = (i / 8) * Math.PI * 2;
@@ -369,15 +335,11 @@ class TodoService {
             `;
             
             document.body.appendChild(spark);
-            
-            // Remove spark after animation
             setTimeout(() => spark.remove(), 1000);
           }
           
-          // Hide original star after explosion
           star.style.opacity = '0';
           setTimeout(() => {
-            // Reset star to original state
             star.style.background = 'rgba(255, 255, 255, 0.8)';
             star.style.boxShadow = 'none';
             star.style.transform = 'scale(1)';
@@ -385,11 +347,10 @@ class TodoService {
             star.style.transition = 'none';
           }, 1000);
         }, 300);
-      }, index * 100); // Stagger the explosions
+      }, index * 100);
     });
   }
 
-  // Add spark explosion CSS animation
   addSparkExplosionStyles() {
     if (!document.querySelector('#spark-explosion-styles')) {
       const style = document.createElement("style");
