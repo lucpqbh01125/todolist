@@ -7,7 +7,7 @@
   --bg-light: #f8fafc;
   --card: #1f2937;
   --card-light: #ffffff;
-  --text: #e5e7eb;
+  --text: #f1f5f9;
   --text-light: #1f2937;
   --muted: #9CA3AF;
   --muted-light: #6b7280;
@@ -60,7 +60,7 @@
   font-weight: 800;
   font-size: 1.6rem;
   letter-spacing: 0.1px;
-  color: white;
+  color:var(--text);
 }
 
 .hero p {
